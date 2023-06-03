@@ -1,13 +1,55 @@
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
-var saveBtn = $('.saveBtn'); //array of saveBtn class elements
-var cardPast = $('.past'); // containers of past, present, future text areas
-var cardPresent = $('.present');
-var cardFuture = $('.future');
-var button = $('.btn');
-console.log(button);
+var currentDayEl = $('#currentDay');
+var saveBtn = $('.saveBtn');
+var dateFormat = 'dddd MMMM DD, YYYY | hh:mm:ss a';
 
+currentDayEl.text(dayjs().format(dateFormat));
+
+var startTime = 09; //military time to make things easier
+var endTime = 17; //only works if same working day
+var timeTrackerAttr = ['past', 'present', 'future'];
+
+var displayDate = setInterval(timer => {
+  var currentDate = dayjs().format(dateFormat);
+  var currentHour = dayjs().format('hh');
+  currentDayEl.text(currentDate);
+
+  for(var i = startTime; i <= endTime; i++){
+    var checkEl = $('#' + 'hour-' + i);
+    if(currentHour == i){
+      checkEl.removeClass(timeTrackerAttr);
+      checkEl.addClass('present');
+    } else if (i < currentHour){
+      checkEl.removeClass(timeTrackerAttr);
+      checkEl.addClass('past');
+    } else if (i > currentHour){
+      checkEl.removeClass(timeTrackerAttr);
+      checkEl.addClass('future');
+    } else { console.log('ERROR???'); }
+  }
+
+}, 1000);
+
+
+//create the element
+//set the attributes
+//set the text
+//put it on the page
+
+
+// function generateTimes(){
+//   var startTime = 9; // military time, must be in same day
+//   var endTime = 17;
+//   var timeRange = (endTime - startTime); // business hours in a day
+//   var timeArr = [];
+//   for (i = 0; i < timeRange; i++){
+    
+//   }
+// }
+
+// generateTimes();
 
 $(function () {
   // TODO: Add a listener for click events on the save button. This code should
@@ -16,9 +58,30 @@ $(function () {
   // function? How can DOM traversal be used to get the "hour-x" id of the
   // time-block containing the button that was clicked? How might the id be
   // useful when saving the description in local storage?
-  button.click(function saveMyThing() {
+  saveBtn.click(function saveMySchedule() {
+    var cardText = $(this).siblings('.description').val();
+    var cardId = $(this).parent().attr('id');
+
+    var myList = {
+      past: '',
+      present: '',
+      future: ''
+    }
+
+    if(cardId == 'hour-9'){
+      myList.past = cardText;
+    } else if (cardId == 'hour-10'){
+      myList.present = cardText;
+    } else if (cardId == 'hour-11'){
+      myList.future = cardText;
+    } else { console.log("ERROR???") }
+
+    console.log(cardId);
+    var storeTime = dayjs().format('h a');
+    var storeInfo = JSON.stringify(storeTime, myList);
     
-    console.log(this.button);
+
+    
   })
   
   //
