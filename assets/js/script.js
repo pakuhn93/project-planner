@@ -11,24 +11,25 @@
 
 var myLocalStorage = "myLocal";
 
-function generateData() {
+function compileData() {
   var myLocalData = JSON.parse(localStorage.getItem(myLocalStorage));
   if (myLocalData == null){
     console.log('testing');
-    return { date: '', past: [], present: [], future: [] }
+    return { date: '' }
   } else { 
     console.log('TESTING');
     return myLocalData; 
   }
 }
 
-var myData = generateData();
+var myData = compileData();
 
 
 var currentDateAndTimeEl = $('#currentDay');
 var saveBtn = $('.saveBtn');
 var dateAndTimeFormat = 'dddd MMMM DD, YYYY | hh:mm:ss a';
 var dateFormat = 'dddd MMMM DD, YYYY';
+var currentDate = dayjs().format(dateFormat);
 
 currentDateAndTimeEl.text(dayjs().format(dateAndTimeFormat));
 
@@ -44,7 +45,7 @@ var displayDate = setInterval(timer => {
   //storing our past, present, and future into our object
 
   for(var i = startTime; i <= endTime; i++){
-    var checkEl = $('#' + 'hour-' + i);
+    var checkEl = $('#hour' + i);
     
     if(currentHour == i){
       checkEl.removeClass(timeTrackerAttr);
@@ -59,12 +60,32 @@ var displayDate = setInterval(timer => {
       checkEl.addClass('future');
     } 
   }
-  myData.date = currentHour;
-  myData.past = $('.past');
-  myData.present = $('present');
-  myData.future = $('.future');
+  // myData.date = currentHour;
+  // myData.past = $('.past');
+  // myData.present = $('present');
+  // myData.future = $('.future');
 
 }, 1000);
+
+populateCards();
+
+function populateCards(){
+
+  for(var i = startTime; i <= endTime; i++){
+    var myCard = $('#hour' + i); //the card that displays the time
+    var myTextbox = myCard.children('.description'); //user input textbox element
+    myTextbox.val(myData['hour' + i]);
+
+
+
+
+    console.log(myTextbox);
+  }
+  
+  // myCards.forEach(index){
+
+  // }
+}
 
 $(function () {
   // TODO: Add a listener for click events on the save button. This code should
@@ -76,8 +97,18 @@ $(function () {
 
   //stores user information onto local storage after clicking the save button
   saveBtn.click(function saveMySchedule() {
-    var storageInfo = JSON.stringify(myData);
-    localStorage.setItem(myLocalStorage, storageInfo);
+    var userTextboxEl = $(this).siblings('.description');
+    var cardTitle = $(this).parent().attr('id');
+    var userText = userTextboxEl.val();
+    myData.date = currentDate;
+    myData[cardTitle] = userText;
+    var storageData = JSON.stringify(myData);
+    localStorage.setItem(myLocalStorage, storageData);
+
+    // when we store the data, we will store it to "this.parent().text();"
+    // this will get us the text value of the card (9AM, 10AM, etc...)
+    // then we will create a new property/replace an existing property's value of our
+    //  object "myData"
   })
   
   //
