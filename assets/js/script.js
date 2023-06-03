@@ -2,27 +2,44 @@
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
 
-var myList = {
-  time: '',
-  past: [],
-  present: [],
-  future: []
+// var myData = {
+//   date: '',
+//   past: [],
+//   present: [],
+//   future: []
+// }
+
+var myLocalStorage = "myLocal";
+
+function generateData() {
+  var myLocalData = JSON.parse(localStorage.getItem(myLocalStorage));
+  if (myLocalData == null){
+    console.log('testing');
+    return { date: '', past: [], present: [], future: [] }
+  } else { 
+    console.log('TESTING');
+    return myLocalData; 
+  }
 }
 
-var currentDayEl = $('#currentDay');
-var saveBtn = $('.saveBtn');
-var dateFormat = 'dddd MMMM DD, YYYY | hh:mm:ss a';
+var myData = generateData();
 
-currentDayEl.text(dayjs().format(dateFormat));
+
+var currentDateAndTimeEl = $('#currentDay');
+var saveBtn = $('.saveBtn');
+var dateAndTimeFormat = 'dddd MMMM DD, YYYY | hh:mm:ss a';
+var dateFormat = 'dddd MMMM DD, YYYY';
+
+currentDateAndTimeEl.text(dayjs().format(dateAndTimeFormat));
 
 var startTime = 09; //military time to make things easier
 var endTime = 17; //only works if same working day
 var timeTrackerAttr = ['past', 'present', 'future'];
 
 var displayDate = setInterval(timer => {
-  var currentDate = dayjs().format(dateFormat);
+  var currentDateAndTime = dayjs().format(dateAndTimeFormat);
   var currentHour = dayjs().format('HH');
-  currentDayEl.text(currentDate);
+  currentDateAndTimeEl.text(currentDateAndTime);
 
   //storing our past, present, and future into our object
 
@@ -42,10 +59,10 @@ var displayDate = setInterval(timer => {
       checkEl.addClass('future');
     } 
   }
-  myList.time = currentDate;
-  myList.past = $('.past');
-  myList.present = $('present');
-  myList.future = $('.future');
+  myData.date = currentHour;
+  myData.past = $('.past');
+  myData.present = $('present');
+  myData.future = $('.future');
 
 }, 1000);
 
@@ -76,23 +93,24 @@ $(function () {
   // time-block containing the button that was clicked? How might the id be
   // useful when saving the description in local storage?
   saveBtn.click(function saveMySchedule() {
-    var cardText = $(this).siblings('.description').val();
-    var cardPast = $(this).parent().class('past');
-    var cardPresent = $(this).parent().class('present');
-    var cardFuture = $(this).parent().class('future');
-    currentDate = dayjs().format(dateFormat);
+    // var cardText = $(this).siblings('.description').val();
+    // var cardPast = $(this).parent().class('past');
+    // var cardPresent = $(this).parent().class('present');
+    // var cardFuture = $(this).parent().class('future');
+    // currentDateAndTime = dayjs().format(dateAndTimeFormat);
     
     // if(cardId == 'hour-9'){
-    //   myList.past = cardText;
+    //   myData.past = cardText;
     // } else if (cardId == 'hour-10'){
-    //   myList.present = cardText;
+    //   myData.present = cardText;
     // } else if (cardId == 'hour-11'){
-    //   myList.future = cardText;
+    //   myData.future = cardText;
     // } else { console.log("ERROR???") }
 
     // console.log(cardId);
-    var storeTime = currentDate;
-    var storeInfo = JSON.stringify(myList);
+    var storeInfo = JSON.stringify(myData);
+
+    console.log(storeInfo);
     
 
     
