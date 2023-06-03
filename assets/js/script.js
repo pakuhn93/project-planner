@@ -1,6 +1,14 @@
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
+
+var myList = {
+  time: '',
+  past: [],
+  present: [],
+  future: []
+}
+
 var currentDayEl = $('#currentDay');
 var saveBtn = $('.saveBtn');
 var dateFormat = 'dddd MMMM DD, YYYY | hh:mm:ss a';
@@ -13,22 +21,31 @@ var timeTrackerAttr = ['past', 'present', 'future'];
 
 var displayDate = setInterval(timer => {
   var currentDate = dayjs().format(dateFormat);
-  var currentHour = dayjs().format('hh');
+  var currentHour = dayjs().format('HH');
   currentDayEl.text(currentDate);
+
+  //storing our past, present, and future into our object
 
   for(var i = startTime; i <= endTime; i++){
     var checkEl = $('#' + 'hour-' + i);
+    
     if(currentHour == i){
       checkEl.removeClass(timeTrackerAttr);
       checkEl.addClass('present');
-    } else if (i < currentHour){
+    } 
+    if (i < currentHour){
       checkEl.removeClass(timeTrackerAttr);
       checkEl.addClass('past');
-    } else if (i > currentHour){
+    } 
+    if (i > currentHour){
       checkEl.removeClass(timeTrackerAttr);
       checkEl.addClass('future');
-    } else { console.log('ERROR???'); }
+    } 
   }
+  myList.time = currentDate;
+  myList.past = $('.past');
+  myList.present = $('present');
+  myList.future = $('.future');
 
 }, 1000);
 
@@ -60,25 +77,22 @@ $(function () {
   // useful when saving the description in local storage?
   saveBtn.click(function saveMySchedule() {
     var cardText = $(this).siblings('.description').val();
-    var cardId = $(this).parent().attr('id');
+    var cardPast = $(this).parent().class('past');
+    var cardPresent = $(this).parent().class('present');
+    var cardFuture = $(this).parent().class('future');
+    currentDate = dayjs().format(dateFormat);
+    
+    // if(cardId == 'hour-9'){
+    //   myList.past = cardText;
+    // } else if (cardId == 'hour-10'){
+    //   myList.present = cardText;
+    // } else if (cardId == 'hour-11'){
+    //   myList.future = cardText;
+    // } else { console.log("ERROR???") }
 
-    var myList = {
-      past: '',
-      present: '',
-      future: ''
-    }
-
-    if(cardId == 'hour-9'){
-      myList.past = cardText;
-    } else if (cardId == 'hour-10'){
-      myList.present = cardText;
-    } else if (cardId == 'hour-11'){
-      myList.future = cardText;
-    } else { console.log("ERROR???") }
-
-    console.log(cardId);
-    var storeTime = dayjs().format('h a');
-    var storeInfo = JSON.stringify(storeTime, myList);
+    // console.log(cardId);
+    var storeTime = currentDate;
+    var storeInfo = JSON.stringify(myList);
     
 
     
